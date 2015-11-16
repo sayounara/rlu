@@ -55,7 +55,7 @@ void urcu_init(int num_threads){
 		pthread_spin_init(&(urcu_spin[i]), PTHREAD_PROCESS_PRIVATE);
 	}	
 
-    printf("initializing URCU finished, node_size: %zd\n", sizeof(rcu_node));
+//    printf("initializing URCU finished, node_size: %zd\n", sizeof(rcu_node));
     return; 
 }
 

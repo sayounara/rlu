@@ -142,7 +142,7 @@ static void barrier_cross(barrier_t *b)
 // FUNCTIONS
 /////////////////////////////////////////////////////////
 static void global_init(int n_threads, int rlu_max_ws) {
-//	RLU_INIT(RLU_TYPE_FINE_GRAINED, rlu_max_ws);
+	RLU_INIT(RLU_TYPE_FINE_GRAINED, rlu_max_ws);
 	RCU_INIT(n_threads);
 }
 
@@ -157,7 +157,7 @@ static void thread_finish(thread_data_t *d) {
 }
 
 static void print_stats() {
-//	RLU_PRINT_STATS();
+	RLU_PRINT_STATS();
 	RCU_PRINT_STATS();
 }
 
@@ -254,8 +254,8 @@ static void *test(void *data)
 	
 	if (d->uniq_id == 0) {
 		/* Populate set */
-//		printf("[%ld] Initializing\n", d->uniq_id);
-//		printf("[%ld] Adding %d entries to set\n", d->uniq_id, d->initial);
+		printf("[%ld] Initializing\n", d->uniq_id);
+		printf("[%ld] Adding %d entries to set\n", d->uniq_id, d->initial);
 		d->p_rlu_td->is_no_quiescence = 1;
 		int i = 0;
 		while (i < d->initial) {
@@ -265,9 +265,9 @@ static void *test(void *data)
 				i++;
 			}
 		}
-//		printf("[%ld] Adding done\n", d->uniq_id);
+		printf("[%ld] Adding done\n", d->uniq_id);
 		int size = hash_list_size(d->p_hash_list);
-//		printf("Hash-list size     : %d\n", size);
+		printf("Hash-list size     : %d\n", size);	
 		
 		d->p_rlu_td->is_no_quiescence = 0;
 	}
@@ -449,22 +449,22 @@ int main(int argc, char **argv)
 	assert(range > 0 && range >= initial);
 	assert(rlu_max_ws >= 1 && rlu_max_ws <= 100 && update >= 0 && update <= 1000);
 
-//	printf("Set type     : hash-list\n");
-//	printf("Buckets      : %d\n", n_buckets);
-//	printf("Duration     : %d\n", duration);
-//	printf("Initial size : %d\n", initial);
-//	printf("Nb threads   : %d\n", nb_threads);
-//	printf("Value range  : %d\n", range);
-//	printf("Seed         : %d\n", seed);
-//	printf("rlu-max-ws   : %d\n", rlu_max_ws);
-//	printf("Update rate  : %d\n", update);
-//	printf("Alternate    : %d\n", alternate);
-//	printf("Node size    : %lu\n", sizeof(node_t));
-//	printf("Type sizes   : int=%d/long=%d/ptr=%d/word=%d\n",
-//		(int)sizeof(int),
-//		(int)sizeof(long),
-//		(int)sizeof(void *),
-//		(int)sizeof(size_t));
+	printf("Set type     : hash-list\n");
+	printf("Buckets      : %d\n", n_buckets);
+	printf("Duration     : %d\n", duration);
+	printf("Initial size : %d\n", initial);
+	printf("Nb threads   : %d\n", nb_threads);
+	printf("Value range  : %d\n", range);
+	printf("Seed         : %d\n", seed);
+	printf("rlu-max-ws   : %d\n", rlu_max_ws);	
+	printf("Update rate  : %d\n", update);
+	printf("Alternate    : %d\n", alternate);
+	printf("Node size    : %lu\n", sizeof(node_t));
+	printf("Type sizes   : int=%d/long=%d/ptr=%d/word=%d\n",
+		(int)sizeof(int),
+		(int)sizeof(long),
+		(int)sizeof(void *),
+		(int)sizeof(size_t));
 
 	timeout.tv_sec = duration / 1000;
 	timeout.tv_nsec = (duration % 1000) * 1000000;
@@ -507,7 +507,7 @@ int main(int argc, char **argv)
 	pthread_attr_init(&attr);
 	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 	for (i = 0; i < nb_threads; i++) {
-//		printf("Creating thread %d\n", i);
+		printf("Creating thread %d\n", i);
 
 		data[i].uniq_id = i;
 		data[i].range = range;
@@ -534,7 +534,7 @@ int main(int argc, char **argv)
 	/* Start threads */
 	barrier_cross(&barrier);
 
-//	printf("STARTING THREADS...\n");
+	printf("STARTING THREADS...\n");
 	gettimeofday(&start, NULL);
 	if (duration > 0) {
 		nanosleep(&timeout, NULL);
@@ -544,7 +544,7 @@ int main(int argc, char **argv)
 	}
 	stop = 1;
 	gettimeofday(&end, NULL);
-//	printf("STOPPING THREADS...\n");
+	printf("STOPPING THREADS...\n");
 
 	/* Wait for thread completion */
 	for (i = 0; i < nb_threads; i++) {
@@ -558,16 +558,16 @@ int main(int argc, char **argv)
 	reads = 0;
 	updates = 0;
 	for (i = 0; i < nb_threads; i++) {
-//		printf("Thread %d\n", i);
-//		printf("  #add        : %lu\n", data[i].nb_add);
-//		printf("  #remove     : %lu\n", data[i].nb_remove);
-//		printf("  #contains   : %lu\n", data[i].nb_contains);
-//		printf("  #found      : %lu\n", data[i].nb_found);
+		printf("Thread %d\n", i);
+		printf("  #add        : %lu\n", data[i].nb_add);
+		printf("  #remove     : %lu\n", data[i].nb_remove);
+		printf("  #contains   : %lu\n", data[i].nb_contains);
+		printf("  #found      : %lu\n", data[i].nb_found);
 		reads += data[i].nb_contains;
 		updates += (data[i].nb_add + data[i].nb_remove);
 		size += data[i].diff;
 	}
-//	printf("Set size      : %d (expected: %d)\n", hash_list_size(p_hash_list), size);
+	printf("Set size      : %d (expected: %d)\n", hash_list_size(p_hash_list), size);
 	printf("Duration      : %d (ms)\n", duration);
 	printf("#ops          : %lu (%f / s)\n", reads + updates, (reads + updates) * 1000.0 / duration);
 	printf("#read ops     : %lu (%f / s)\n", reads, reads * 1000.0 / duration);

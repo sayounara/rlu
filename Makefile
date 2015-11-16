@@ -1,19 +1,24 @@
-URCUDIR ?= /usr/local
-
-CC := gcc
-LD := gcc
-
-CFLAGS += -I$(URCUDIR)/include
-CFLAGS += -D_REENTRANT
-CFLAGS += -Wall -Winline
-#CFLAGS += --param inline-unit-growth=1000
-CFLAGS += -mrtm
-
 ifdef DEBUG
 	CFLAGS += -O0 -g3
 else
 	CFLAGS += -DNDEBUG
 	CFLAGS += -O3
+endif
+
+ifeq ($(VERSION),MIC) 
+	URCUDIR ?= /opt/ics/install/composer_xe_2015.0.090/compiler
+	CC := gcc_mic
+	LD := gcc_mic
+	CFLAGS += -DMIC
+else
+URCUDIR ?= /usr/local
+CC := gcc
+LD := gcc
+CFLAGS += -I$(URCUDIR)/include
+CFLAGS += -D_REENTRANT
+CFLAGS += -Wall -Winline
+#CFLAGS += --param inline-unit-growth=1000
+CFLAGS += -mrtm
 endif
 
 IS_HAZARD_PTRS_HARRIS = -DIS_HAZARD_PTRS_HARRIS
@@ -24,8 +29,8 @@ IS_RLU = -DIS_RLU
 LDFLAGS += -L$(URCUDIR)/lib
 LDFLAGS += -lpthread
 
-BINS = bench-harris bench-hp-harris bench-rcu bench-rlu
-
+#BINS = bench-harris bench-hp-harris bench-rcu bench-rlu
+BINS = bench-rcu  bench-rlu
 .PHONY:	all clean
 
 all: $(BINS)
@@ -42,23 +47,23 @@ hazard_ptrs.o: hazard_ptrs.c
 hash-list.o: hash-list.c
 	$(CC) $(CFLAGS) $(DEFINES) -c -o $@ $<
 
-bench-harris.o: bench.c
-	$(CC) $(CFLAGS) $(IS_HARRIS) $(DEFINES) -c -o $@ $<
+#bench-harris.o: bench.c
+#	$(CC) $(CFLAGS) $(IS_HARRIS) $(DEFINES) -c -o $@ $<
 
-bench-hp-harris.o: bench.c
-	$(CC) $(CFLAGS) $(IS_HAZARD_PTRS_HARRIS) $(DEFINES) -c -o $@ $<
+#bench-hp-harris.o: bench.c
+#	$(CC) $(CFLAGS) $(IS_HAZARD_PTRS_HARRIS) $(DEFINES) -c -o $@ $<
 
 bench-rcu.o: bench.c
 	$(CC) $(CFLAGS) $(IS_RCU) $(DEFINES) -c -o $@ $<
 
-bench-rlu.o: bench.c
+bench-rlu.o: test_rlu.c
 	$(CC) $(CFLAGS) $(IS_RLU) $(DEFINES) -c -o $@ $<
 
-bench-harris: new-urcu.o hazard_ptrs.o rlu.o hash-list.o bench-harris.o
-	$(LD) -o $@ $^ $(LDFLAGS)
+#bench-harris: new-urcu.o hazard_ptrs.o rlu.o hash-list.o bench-harris.o
+#	$(LD) -o $@ $^ $(LDFLAGS)
 
-bench-hp-harris: new-urcu.o hazard_ptrs.o rlu.o hash-list.o bench-hp-harris.o
-	$(LD) -o $@ $^ $(LDFLAGS)
+#bench-hp-harris: new-urcu.o hazard_ptrs.o rlu.o hash-list.o bench-hp-harris.o
+#	$(LD) -o $@ $^ $(LDFLAGS)
 
 bench-rcu: new-urcu.o hazard_ptrs.o rlu.o hash-list.o bench-rcu.o
 	$(LD) -o $@ $^ $(LDFLAGS)

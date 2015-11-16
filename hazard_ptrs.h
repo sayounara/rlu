@@ -8,7 +8,7 @@
 #ifdef __x86_64
 #include <immintrin.h>
 #endif
-
+//typedef long long int int64_t
 /////////////////////////////////////////////////////////
 // DEFINES
 /////////////////////////////////////////////////////////
@@ -20,7 +20,7 @@
 // TYPES
 /////////////////////////////////////////////////////////
 typedef struct _hp_record_t {
-	volatile int64_t *ptr;
+	volatile long long int *ptr;
 } hp_record_t;
 
 typedef struct _hp_thread_t { 
@@ -39,7 +39,7 @@ void HP_save(hp_thread_t *p_hp);
 void HP_restore(hp_thread_t *p_hp);
 
 hp_record_t *HP_alloc(hp_thread_t *self);
-void HP_init(hp_record_t *p_hp, volatile int64_t **ptr_ptr);
+void HP_init(hp_record_t *p_hp, volatile long long int **ptr_ptr);
 
 #ifdef IS_HP_ENABLED
 
@@ -48,7 +48,7 @@ void HP_init(hp_record_t *p_hp, volatile int64_t **ptr_ptr);
 #define HP_RESTORE(self) HP_restore(self)
 
 #define HP_ALLOC(self) HP_alloc(self)
-#define HP_INIT(self, p_hp, ptr_ptr) HP_init(p_hp, (volatile int64_t **)ptr_ptr)
+#define HP_INIT(self, p_hp, ptr_ptr) HP_init(p_hp, (volatile long long int **)ptr_ptr)
 
 #else
 

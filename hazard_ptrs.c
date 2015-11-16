@@ -38,7 +38,7 @@ hp_record_t *HP_alloc(hp_thread_t *self) {
 	
 }
 
-void HP_init(hp_record_t *p_hp, volatile int64_t **ptr_ptr) {
+void HP_init(hp_record_t *p_hp, volatile long long int **ptr_ptr) {
 	
 	while (1) { 
 		p_hp->ptr = *ptr_ptr;
